@@ -2,13 +2,23 @@
 
 import sys
 
+HLT = 0b00000001 # LDI
+LDI = 0b10000010 # PRN
+PRN = 0b01000111 # HLT
+
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        self.ram = [0] * 8
+        self.ram = [0] * 256
         self.register = [0] * 8
+        self.pc = 0
+        self.commands = {
+            "HLT": 0b00000001, # LDI
+            "LDI": 0b10000010, # PRN
+            "PRN": 0b01000111 # HLT
+        }
 
     def load(self):
         """Load a program into memory."""
@@ -63,34 +73,37 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        self.load()
-        pc = 0 
         halted = False
 
         while not halted:
-            instruction = self.ram[0]
+            instruction = self.ram[self.pc]
 
-            if instruction == 0b10000010:
-                value = self.ram[pc + 1] 
-                reg_num = self.ram[pc + 2]
-
+            if instruction == self.commands["LDI"]: # LDI R0,8
+                print("inside LDI")
+                reg_num  = self.ram[self.pc + 1]
+                value = self.ram[self.pc + 2]
                 self.register[reg_num] = value
+                self.pc += 2
             
-            elif instruction == 0b01000111:
-                reg_num = memory[pc + 1]
-                print(register[reg_num])
+            elif instruction == self.commands["PRN"]: # PRN R0
+                print("inside PRN")
+                reg_num = self.ram[self.pc + 1]
+                print(self.register[reg_num])
+                self.pc += 1
             
-            elif instruction == 0b00000001:
+            elif instruction == self.commands["HLT"]: # HLT
+                print("inside HLT")
                 halted = True
-                pc += 1
+                self.pc += 1 
+            
+            else:
+                self.pc += 1
 
 
-    # `j`
-    def ram_read(self, MAR):
+    def ram_read(self, position):
         """Run the CPU."""
-        MDR = self.ram[MAR] 
-        return MDR
+        return self.ram[position]
 
-    def ram_write(self, MDR, MAR):
+    def ram_write(self, position, value):
         """Run the CPU."""
-        self.ram[MAR] = MDR
+        self.ram[position] = value
