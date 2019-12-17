@@ -79,25 +79,22 @@ class CPU:
             instruction = self.ram[self.pc]
 
             if instruction == self.commands["LDI"]: # LDI R0,8
-                print("inside LDI")
-                reg_num  = self.ram[self.pc + 1]
-                value = self.ram[self.pc + 2]
-                self.register[reg_num] = value
-                self.pc += 2
+                position  = self.ram[self.pc + 1] # get position
+                value = self.ram[self.pc + 2] # get value to store
+                self.register[position] = value # save value into register
+                self.pc += 2 # increase pc position by 2
             
             elif instruction == self.commands["PRN"]: # PRN R0
-                print("inside PRN")
-                reg_num = self.ram[self.pc + 1]
-                print(self.register[reg_num])
-                self.pc += 1
+                position = self.ram[self.pc + 1] # get position of number to pring
+                print(self.register[position]) # print value at given position
+                self.pc += 1 # increase pc value by 1
             
             elif instruction == self.commands["HLT"]: # HLT
-                print("inside HLT")
-                halted = True
-                self.pc += 1 
+                halted = True # halt while loop
+                self.pc += 1 # increase pc by 1
             
             else:
-                self.pc += 1
+                self.pc += 1 # if no commands match then increase pc by 1
 
 
     def ram_read(self, position):
