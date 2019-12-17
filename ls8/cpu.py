@@ -22,7 +22,7 @@ class CPU:
 
     def load(self):
         """Load a program into memory."""
-
+        filename = sys.argv[1]
         address = 0
 
         # For now, we've just hardcoded a program:
@@ -34,12 +34,28 @@ class CPU:
             0b00001000,
             0b01000111, # PRN R0
             0b00000000,
+            0b01000111, # PRN R0
+            0b00000000,
+            0b01000111, # PRN R0
+            0b00000000,
             0b00000001, # HLT
         ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        with open(filename) as f:
+            for line in f:
+                n = line.split("#")
+                n[0] = n[0].strip()
+
+                if n[0] == '':
+                    continue
+
+                val = int(n[0], 2)
+                self.ram[address] = val
+                address += 1
+
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
 
 
     def alu(self, op, reg_a, reg_b):
