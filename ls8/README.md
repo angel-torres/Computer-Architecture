@@ -65,6 +65,10 @@ but you'll have to implement those three above instructions first!
 * Read this whole file.
 * Skim the spec.
 
+## List of files
+    - cpu.py - this is where the code is for our cpu emulator. This is where most of my code will be written.
+    - ls8.py - this is where an instance of the cpu is invoked. 
+
 ## Step 1: Add the constructor to `cpu.py`
 
 Add list properties to the `CPU` class to hold 256 bytes of memory and 8
