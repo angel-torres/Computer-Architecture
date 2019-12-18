@@ -15,9 +15,10 @@ class CPU:
         self.register = [0] * 8
         self.pc = 0
         self.commands = {
-            "HLT": 0b00000001, # LDI
-            "LDI": 0b10000010, # PRN
-            "PRN": 0b01000111 # HLT
+            "HLT": 0b00000001, # HLT
+            "LDI": 0b10000010, # LDI
+            "PRN": 0b01000111, # PRN
+            "MUL": 0b10100010 # MUL
         }
 
     def load(self):
@@ -32,10 +33,6 @@ class CPU:
             0b10000010, # LDI R0,8
             0b00000000,
             0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b01000111, # PRN R0
-            0b00000000,
             0b01000111, # PRN R0
             0b00000000,
             0b00000001, # HLT
@@ -62,8 +59,9 @@ class CPU:
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+            self.register[reg_a] += self.register[reg_b]
+        elif op == "MUL": 
+            self.register[reg_a] *= self.register[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -104,6 +102,12 @@ class CPU:
                 position = self.ram[self.pc + 1] # get position of number to pring
                 print(self.register[position]) # print value at given position
                 self.pc += 1 # increase pc value by 1
+
+            elif instruction == self.commands["MUL"]: # MUL
+                position1  = self.ram[self.pc + 1] # get position
+                position2 = self.ram[self.pc + 2] # get value to store
+                self.alu("MUL", position1, position2) # increase pc by 1
+                self.pc += 3 # increase pc position by 2
             
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
