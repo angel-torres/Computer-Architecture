@@ -15,15 +15,18 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.register = [0] * 8
-        self.pc = 0
+        self.pc = self.register[7]
         self.sp = 7
         self.commands = {
             "HLT": 0b00000001, # HLT
             "LDI": 0b10000010, # LDI
             "PRN": 0b01000111, # PRN
             "MUL": 0b10100010, # MUL
+            "ADD": 0b10100000, # MUL
             "POP": 0b01000110, # POP
-            "PUSH": 0b01000101 # PUSH
+            "PUSH": 0b01000101, # PUSH
+            "CALL": 0b01010000, # CALL
+            "RET": 0b00010001, # RET
         }
 
     def load(self):
@@ -114,21 +117,37 @@ class CPU:
                 self.alu("MUL", operand_a, operand_b) # increase pc by 1
                 self.pc += 3 # increase pc position by 2
 
+            elif instruction == self.commands["ADD"]: # MUL
+                operand_a  = self.ram[self.pc + 1] # get position
+                operand_b = self.ram[self.pc + 2] # get value to store
+                self.alu("ADD", operand_a, operand_b) # increase pc by 1
+                self.pc += 3 # increase pc position by 2
+
             elif instruction == self.commands["PUSH"]: # PUSH
-                operand_a = self.ram[self.pc + 1]
-                value = self.register[operand_a]
+                operand_a = self.ram[self.pc + 1] # gives the position of value to push
+                value = self.register[operand_a] # gives value at specified register
                 self.sp -= 1
                 self.ram[self.sp] = value
                 self.pc += 2
 
             elif instruction == self.commands["POP"]: # POP
-                operand_a = self.ram[self.pc + 1]
+                operand_a = self.ram[self.pc + 1] # gives 
                 value = self.ram[self.sp]
                 self.register[operand_a] = value
                 self.sp += 1
                 self.pc += 2
 
-            
+            elif instruction == self.commands["CALL"]: # CALL
+                reg_a = self.register[self.ram[self.pc + 1]] # here we save into variable the position we need to skip to
+                self.sp -= 1 # we 
+                self.ram[self.sp] = self.pc + 2
+                self.pc = reg_a 
+
+            elif instruction == self.commands["RET"]: # RET
+                return_address = self.ram[self.sp]
+                self.ram[self.sp] += 1
+                self.pc = return_address 
+
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
                 self.pc += 1 # increase pc by 1
