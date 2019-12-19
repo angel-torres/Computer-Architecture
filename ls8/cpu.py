@@ -115,7 +115,6 @@ class CPU:
                 self.pc += 3 # increase pc position by 2
 
             elif instruction == self.commands["PUSH"]: # PUSH
-                print("FROM PUSH")
                 operand_a = self.ram[self.pc + 1]
                 value = self.register[operand_a]
                 self.sp -= 1
@@ -123,7 +122,6 @@ class CPU:
                 self.pc += 2
 
             elif instruction == self.commands["POP"]: # POP
-                print("FROM POP")
                 operand_a = self.ram[self.pc + 1]
                 value = self.ram[self.sp]
                 self.register[operand_a] = value
@@ -132,7 +130,6 @@ class CPU:
 
             
             elif instruction == self.commands["HLT"]: # HLT
-                print("FROM HALT")
                 halted = True # halt while loop
                 self.pc += 1 # increase pc by 1
             
