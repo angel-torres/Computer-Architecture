@@ -22,7 +22,7 @@ class CPU:
             "LDI": 0b10000010, # LDI
             "PRN": 0b01000111, # PRN
             "MUL": 0b10100010, # MUL
-            "ADD": 0b10100000, # MUL
+            "ADD": 0b10100000, # ADD
             "POP": 0b01000110, # POP
             "PUSH": 0b01000101, # PUSH
             "CALL": 0b01010000, # CALL
@@ -125,28 +125,28 @@ class CPU:
 
             elif instruction == self.commands["PUSH"]: # PUSH
                 operand_a = self.ram[self.pc + 1] # gives the position of value to push
-                value = self.register[operand_a] # gives value at specified register
+                value = self.register[operand_a] # get value to to push from register
                 self.sp -= 1
                 self.ram[self.sp] = value
                 self.pc += 2
 
             elif instruction == self.commands["POP"]: # POP
-                operand_a = self.ram[self.pc + 1] # gives 
-                value = self.ram[self.sp]
-                self.register[operand_a] = value
-                self.sp += 1
-                self.pc += 2
+                operand_a = self.ram[self.pc + 1] # gives what register I want save the value I popped
+                value = self.ram[self.sp] # gets last value from stack
+                self.register[operand_a] = value # registers popped value into register
+                self.sp += 1 # increase stack pointer
+                self.pc += 2 # instructions pointer goes up 2
 
             elif instruction == self.commands["CALL"]: # CALL
                 reg_a = self.register[self.ram[self.pc + 1]] # here we save into variable the position we need to skip to
-                self.sp -= 1 # we 
-                self.ram[self.sp] = self.pc + 2
-                self.pc = reg_a 
+                self.sp -= 1 # we decrease stack pointer to save new value 
+                self.ram[self.sp] = self.pc + 2 # We save into ram the next instruction index we must come back to after call into stack
+                self.pc = reg_a  # We jump to instruction index
 
             elif instruction == self.commands["RET"]: # RET
-                return_address = self.ram[self.sp]
-                self.ram[self.sp] += 1
-                self.pc = return_address 
+                return_address = self.ram[self.sp] # we grab return adress from stack
+                self.ram[self.sp] += 1 # increase instructions pointer by 1
+                self.pc = return_address # point pc pointer back to return address
 
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
