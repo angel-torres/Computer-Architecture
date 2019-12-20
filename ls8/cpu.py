@@ -183,15 +183,18 @@ class CPU:
                 self.pc += 3 # increase pc position by 2
 
             elif instruction == self.commands["JMP"]: 
-                pass
+                operand_a  = self.ram[self.pc + 1] # get register
+                self.pc = self.register[operand_a] # move pc to position stored in register
 
             elif instruction == self.commands["JEQ"]: 
-                pass
+                if self.E == 1:
+                    operand_a  = self.ram[self.pc + 1] # get register
+                    self.pc = self.register[operand_a] # move pc to position stored in register
 
             elif instruction == self.commands["JNE"]: 
-                pass
-
-
+                if self.E == 0:
+                    operand_a  = self.ram[self.pc + 1] # get register
+                    self.pc = self.register[operand_a] # move pc to position stored in register
 
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
