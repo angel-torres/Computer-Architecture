@@ -2,11 +2,17 @@
 
 import sys
 
-HLT = 0b00000001 # LDI
-LDI = 0b10000010 # PRN
-PRN = 0b01000111 # HLT
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
 POP = 0b01000110
 PUSH = 0b01000101
+
+# TODO
+# Add CMP instruction and equal flag
+# add JMP instruction   
+# add JEQ 
+# add JNE
 
 class CPU:
     """Main CPU class."""
@@ -15,18 +21,25 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.register = [0] * 8
-        self.pc = self.register[7]
+        self.pc = 0
         self.sp = 7
+        self.E = 0
+        self.L = 0
+        self.G = 0
         self.commands = {
-            "HLT": 0b00000001, # HLT
-            "LDI": 0b10000010, # LDI
-            "PRN": 0b01000111, # PRN
-            "MUL": 0b10100010, # MUL
-            "ADD": 0b10100000, # ADD
-            "POP": 0b01000110, # POP
-            "PUSH": 0b01000101, # PUSH
-            "CALL": 0b01010000, # CALL
-            "RET": 0b00010001, # RET
+            "HLT": 0b00000001,
+            "LDI": 0b10000010,
+            "PRN": 0b01000111,
+            "MUL": 0b10100010,
+            "ADD": 0b10100000,
+            "POP": 0b01000110,
+            "PUSH": 0b01000101,
+            "CALL": 0b01010000,
+            "RET": 0b00010001,
+            "CMP": 0b10100111,
+            "JMP": 0b01010100,
+            "JEQ": 0b01010101,
+            "JNE": 0b01010110
         }
 
     def load(self):
@@ -70,6 +83,19 @@ class CPU:
             self.register[reg_a] += self.register[reg_b]
         elif op == "MUL": 
             self.register[reg_a] *= self.register[reg_b]
+        elif op == "CMP": 
+
+            # set E flag to 1 if equal
+            if self.register[reg_a] == self.register[reg_b]:
+                self.E = 1
+
+            # set L flag to 1 if less than
+            if self.register[reg_a] < self.register[reg_b]:
+                self.L = 1
+
+            # set G flag to 1 if greater than
+            if self.register[reg_a] > self.register[reg_b]:
+                self.G = 1
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -147,6 +173,25 @@ class CPU:
                 return_address = self.ram[self.sp] # we grab return adress from stack
                 self.ram[self.sp] += 1 # increase instructions pointer by 1
                 self.pc = return_address # point pc pointer back to return address
+            
+#----------------------------------------- SPRINT CHALLENGE
+
+            elif instruction == self.commands["CMP"]: 
+                operand_a  = self.ram[self.pc + 1] # get position
+                operand_b = self.ram[self.pc + 2] # get value to store
+                self.alu("CMP", operand_a, operand_b) # increase pc by 1
+                self.pc += 3 # increase pc position by 2
+
+            elif instruction == self.commands["JMP"]: 
+                pass
+
+            elif instruction == self.commands["JEQ"]: 
+                pass
+
+            elif instruction == self.commands["JNE"]: 
+                pass
+
+
 
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
