@@ -84,7 +84,6 @@ class CPU:
         elif op == "MUL": 
             self.register[reg_a] *= self.register[reg_b]
         elif op == "CMP": 
-
             # set E flag to 1 if equal
             if self.register[reg_a] == self.register[reg_b]:
                 self.E = 1
@@ -190,11 +189,15 @@ class CPU:
                 if self.E == 1:
                     operand_a  = self.ram[self.pc + 1] # get register
                     self.pc = self.register[operand_a] # move pc to position stored in register
+                else:
+                    self.pc += 2
 
             elif instruction == self.commands["JNE"]: 
                 if self.E == 0:
                     operand_a  = self.ram[self.pc + 1] # get register
                     self.pc = self.register[operand_a] # move pc to position stored in register
+                else:
+                    self.pc += 2
 
             elif instruction == self.commands["HLT"]: # HLT
                 halted = True # halt while loop
